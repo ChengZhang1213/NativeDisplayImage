@@ -4,7 +4,6 @@
 #include <assert.h>
 #include <android/asset_manager.h>
 #include <android/asset_manager_jni.h>
-#include "jni.h"
 #include "string"
 #include "GLES2/gl2.h"
 #include "android_tools.h"
@@ -52,11 +51,11 @@ auto gVertexShader =
 
 auto gFragmentShader =
         "precision mediump float;\n"
-                "uniform sampler2D u_TextureUnit;\n"
+                "uniform sampler2D texture;\n"
                 "varying vec2 v_TextureCoordinates;\n"
                 "void main() {\n"
-                "  //gl_FragColor = vec4(0.0, 1.0, 0.0, 1.0);\n"
-                "gl_FragColor = texture2D(u_TextureUnit, v_TextureCoordinates);\n"
+                "  //gl_FragColor = vec4(0.0, 1.0, 1.0, 1.0);\n"
+                "gl_FragColor = texture2D(texture, v_TextureCoordinates);\n"
                 "}\n";
 
 GLuint textureID;
@@ -64,24 +63,17 @@ GLuint buffer;
 GLuint gProgram;
 GLuint gvPositionHandle;
 GLuint textureCoordinatesHandle;
-GLuint u_texture_unit_location;
+GLuint textureLocation;
 
 void onPreDraw(const char *string);
 
-//const GLfloat gTriangleVertices[] = {
-//        -0.5f, 0.5f, 0.0f,
-//        0.5f, 0.5f, 0.0f,
-//        -0.5f, -0.5f, 0.0f,
-//        0.5f, -0.5f, 0.0f
-////        -1.0f, -1.0f, 0.0f,//bottom left
-////        1.0f, -1.0f, 0.0f,//bottom right
-////        -1.0f, 1.0f, 0.0f,//top left
-////        1.0f, 1.0f, 0.0f//top right
-//};
-static const float rect[] = {-1.0f, -1.0f, 0.0f, 0.0f,
-                             -1.0f, 1.0f, 0.0f, 1.0f,
-                             1.0f, -1.0f, 1.0f, 0.0f,
-                             1.0f, 1.0f, 1.0f, 1.0f};
+
+static const float rect[] = {-1.0f, -1.0f, 0.0f, 1.0f,
+                             1.0f, -1.0f, 1.0f, 1.0f,
+                             -1.0f, 1.0f, 0.0f, 0.0f,
+                             1.0f, 1.0f, 1.0f, 0.0f
+};
+
 
 bool setupGraphics(int w, int h) {
     printGLString("Version", GL_VERSION);
@@ -97,7 +89,7 @@ bool setupGraphics(int w, int h) {
     }
     gvPositionHandle = (GLuint) glGetAttribLocation(gProgram, "vPosition");
     textureCoordinatesHandle = (GLuint) glGetAttribLocation(gProgram, "a_TextureCoordinates");
-    u_texture_unit_location = (GLuint) glGetUniformLocation(gProgram, "u_TextureUnit");
+    textureLocation = (GLuint) glGetUniformLocation(gProgram, "texture");
     checkGlError("glGetAttribLocation");
     LOGI("glGetAttribLocation(\"vPosition\") = %d\n",
          gvPositionHandle);
@@ -109,8 +101,11 @@ bool setupGraphics(int w, int h) {
 
 
 void onPreDraw(const char *imgPath) {
-    const cv::Mat &mat = cv::imread(imgPath);
-    textureID = load_texture(mat.cols, mat.rows, CV_8UC4, mat.data);
+    IplImage *src = cvLoadImage(imgPath);
+    IplImage *dst = cvCreateImage(cvGetSize(src),src->depth,src->nChannels);
+    //you should confirm the image type
+    cvCvtColor(src,dst,CV_BGR2RGB);
+    textureID = load_texture(src->width, src->height, CV_8UC4,dst->imageData );
     buffer = create_vbo(sizeof(rect), rect, GL_STATIC_DRAW);
 
 }
@@ -122,9 +117,10 @@ void renderFrame() {
 
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, textureID);
-    glUniform1i(u_texture_unit_location, 0);
+    glUniform1i(textureLocation, 0);
 
     glBindBuffer(GL_ARRAY_BUFFER, buffer);
+
     glVertexAttribPointer(gvPositionHandle, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(GL_FLOAT),
                           BUFFER_OFFSET(0));
     glVertexAttribPointer(textureCoordinatesHandle, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(GL_FLOAT),
@@ -134,6 +130,7 @@ void renderFrame() {
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
     glBindBuffer(GL_ARRAY_BUFFER, 0);
+
 }
 
 
