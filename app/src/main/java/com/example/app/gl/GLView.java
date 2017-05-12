@@ -1,6 +1,8 @@
 package com.example.app.gl;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.opengl.GLSurfaceView;
 import android.util.AttributeSet;
 
@@ -18,7 +20,7 @@ public class GLView extends GLSurfaceView {
 
     public GLView(Context context, String path) {
         super(context);
-        init(context,path);
+        init(context, path);
     }
 
     public GLView(Context context, AttributeSet attrs) {
@@ -31,12 +33,13 @@ public class GLView extends GLSurfaceView {
         this.context = context;
         setEGLContextFactory(new ContextFactory());
 
-        setRenderer(new Renderer(context,path));
+        setRenderer(new Renderer(context, path));
     }
 
     private static class Renderer implements GLSurfaceView.Renderer {
         private Context context;
         private String path;
+
         public Renderer(Context context, String path) {
             this.context = context;
             this.path = path;
@@ -47,7 +50,9 @@ public class GLView extends GLSurfaceView {
         }
 
         public void onSurfaceChanged(GL10 gl, int width, int height) {
-            RenderJNI.on_surface_changed(width, height);
+            Bitmap bitmap = BitmapFactory.decodeFile(path);
+            RenderJNI.on_surface_changed(width
+                    , height);
         }
 
         public void onSurfaceCreated(GL10 gl, EGLConfig config) {

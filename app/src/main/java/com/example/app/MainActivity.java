@@ -13,11 +13,12 @@ public class MainActivity extends AppCompatActivity {
     GLView mView;
     String path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/download/images/0.png";
 
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mView = new GLView(getApplication(),path);
 
+        mView = new GLView(getApplication(),path);
 
         setContentView(mView);
 //        setContentView(R.layout.activity_main);
