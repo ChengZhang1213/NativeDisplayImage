@@ -19,3 +19,9 @@
 
 本例子使用了VBO的方式加载纹理，你也可以将顶点坐标和文理坐标分开定义，但是根据OpenGLES开放者建议使用VBO
 
+#TODO
+加入特征点到提取和显示，添加SIFT的方式，参考于[sift-gpu-iphone][1]
+但是算出的结果和IOS的结果不一致 T_T
+
+
+  [1]: https://github.com/Moodstocks/sift-gpu-iphone
