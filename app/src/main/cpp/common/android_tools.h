@@ -25,7 +25,7 @@ static void checkGlError(const char* op) {
     }
 }
 
-GLuint loadShader(GLenum shaderType, const char* pSource) {
+static GLuint loadShader(GLenum shaderType, const char* pSource) {
     GLuint shader = glCreateShader(shaderType);
     if (shader) {
         glShaderSource(shader, 1, &pSource, NULL);
@@ -51,7 +51,7 @@ GLuint loadShader(GLenum shaderType, const char* pSource) {
     return shader;
 }
 
-GLuint createProgram(const char* pVertexSource, const char* pFragmentSource) {
+static GLuint createProgram(const char* pVertexSource, const char* pFragmentSource) {
     GLuint vertexShader = loadShader(GL_VERTEX_SHADER, pVertexSource);
     if (!vertexShader) {
         return 0;

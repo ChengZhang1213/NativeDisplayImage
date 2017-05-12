@@ -6,13 +6,14 @@
 #include <android/asset_manager_jni.h>
 #include "string"
 #include "GLES2/gl2.h"
-#include "android_tools.h"
+
 #include "texture.h"
 #include "opencv2/core.hpp"
 #include "opencv2/highgui.hpp"
 #include "opencv2/imgproc.hpp"
 #include "opencv2/features2d.hpp"
 #include "buffer.h"
+#include "common/android_tools.h"
 
 using namespace cv;
 
@@ -80,8 +81,7 @@ static const float rect[] = {-1.0f, -1.0f, 0.0f, 1.0f,
                              1.0f, 1.0f, 1.0f, 0.0f
 };
 
-int width;
-int height;
+
 
 bool setupGraphics(int w, int h) {
     printGLString("Version", GL_VERSION);
@@ -104,8 +104,7 @@ bool setupGraphics(int w, int h) {
 
     glViewport(0, 0, w, h);
     checkGlError("glViewport");
-    width = w;
-    height = h;
+
     return true;
 }
 
@@ -135,8 +134,7 @@ void onPreDraw(const char *imgPath) {
 //    cvCvtColor(src,dst,CV_BGR2GRAY);
     const cv::Mat &src = cv::imread(imgPath);
 
-    width = src.rows;
-    height = src.cols;
+
 //    cv::Mat rgbMat;
 //    cv::cvtColor(src,rgbMat,cv::COLOR_BGR2RGB);
 // uint8_t *grayData;

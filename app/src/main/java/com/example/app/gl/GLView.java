@@ -34,6 +34,7 @@ public class GLView extends GLSurfaceView {
         setEGLContextFactory(new ContextFactory());
 
         setRenderer(new Renderer(context, path));
+        setRenderMode(RENDERMODE_WHEN_DIRTY);
     }
 
     private static class Renderer implements GLSurfaceView.Renderer {

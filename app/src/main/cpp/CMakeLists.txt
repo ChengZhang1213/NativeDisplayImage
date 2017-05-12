@@ -20,6 +20,8 @@ add_library(renderJni SHARED
             RenderJNI.cpp
             buffer.cpp
             texture.cpp
+
+            SIFT/SIFT.cpp
             )
 
 
